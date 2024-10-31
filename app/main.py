@@ -14,7 +14,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = connection_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
-
+#יוצר את הקישור לממשק של זה
 app.add_url_rule(
     '/graphql',
     view_func=GraphQLView.as_view(

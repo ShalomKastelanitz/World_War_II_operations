@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, Float, ForeignKey, Numeric,Date
 from unicodedata import numeric
 
 Base = declarative_base()
-
+#סידור המודלים לפי השדות בדאטה בייס
 class CitiesModel(Base):
     __tablename__ = 'cities'
     city_id = Column(Integer, primary_key=True, autoincrement=True)
