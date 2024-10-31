@@ -56,7 +56,7 @@ class Query(graphene.ObjectType):
 
 
 #Mutations
-class AddTarget(graphene.Mutation):
+class Addmission(graphene.Mutation):
         class Arguments:
             mission_date = graphene.Date(required=True)
             airborne_aircraft = graphene.Float(required=True)
@@ -67,15 +67,40 @@ class AddTarget(graphene.Mutation):
             aircraft_damaged = graphene.Float(required=True)
             aircraft_lost = graphene.Float(required=True)
 
-        Target = graphene.Field(lambda: TargetsModel)
+        mission = graphene.Field(lambda: mission)
 
         def mutate(self, info, mission_date, airborne_aircraft, attacking_aircraft,bombing_aircraft,aircraft_returned,aircraft_failed,aircraft_damaged,aircraft_lost):
 
             new_Target = TargetsModel(mission_date=mission_date,airborne_aircraft=airborne_aircraft,attacking_aircraft=attacking_aircraft,
                                       bombing_aircraft=bombing_aircraft,aircraft_returned=aircraft_returned,aircraft_failed=aircraft_failed,aircraft_damaged=aircraft_damaged,aircraft_lost=aircraft_lost)
+            try:
+                birth_date_obj = datetime.strptime(mission_date, '%Y-%m-%d').date()
+            except ValueError:
+                raise Exception("Invalid birth date format. Expected 'YYYY-MM-DD'")
             db_session.add(new_Target)
             db_session.commit()
             return AddTarget(user=new_Target)
+
+
+class AddTarget(graphene.Mutation):
+    class Arguments:
+
+        target_priority = graphene.Int(required=True)
+        target_industry =  graphene.Int(required=True)
+        mission_id =  graphene.Int(required=True)
+        target_type_id = graphene.Int(required=True)
+        city_id =  graphene.Int(required=True)
+
+    Target = graphene.Field(lambda: Target)
+
+    def mutate(self, info, target_priority, target_industry, mission_id,target_type_id,city_id):
+
+        new_Target=TargetsModel(target_priority=target_priority,target_industry=target_industry,mission_id=mission_id,target_type_id=target_type_id,city_id=city_id)
+        db_session.add(new_Target)
+        db_session.commit()
+        return AddTarget(user=new_Target)
+
 class Mutation(graphene.ObjectType):
     add_Target = AddTarget.Field()
-schema = graphene.Schema(query=Query )
+    add_mission= Addmission.Field()
+schema = graphene.Schema(query=Query, Mutation=Mutation)
